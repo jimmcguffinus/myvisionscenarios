@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 0%;
+  --foreground: 270 70% 92%;
+
+  --card: 0 0% 0%;
+  --card-foreground: 270 100% 96%;
+
+  --popover: 0 0% 0%;
+  --popover-foreground: 270 100% 96%;
+
+  --primary: 270 50% 45%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 280 60% 70%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 0 0% 10%;
+  --muted-foreground: 270 30% 80%;
+
+  --accent: 280 70% 75%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 80% 40%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 270 50% 45%;
+  --input: 270 50% 45%;
+  --ring: 270 50% 45%;
+
+  --radius: 0.5rem;
+}
+
+body {
+  @apply bg-black text-purple-light;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Print styles */
+@media print {
+  /* Hide everything by default */
+  body > * {
+    display: none !important;
+  }
+
+  /* Hide specific UI elements */
+  nav,
+  header,
+  footer,
+  button,
+  .print:hidden,
+  [role="tablist"],
+  [data-state="inactive"] {
+    display: none !important;
+  }
+
+  /* Only show the print content */
+  #print-content {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    color: black;
+    padding: 2rem;
+    margin: 0;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  /* General print styling */
+  @page {
+    margin: 2cm;
+  }
+
+  h1,
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Ensure links show their URL */
+  a[href]::after {
+    content: " (" attr(href) ")";
+  }
+
+  /* Ensure the print view is properly styled */
+  #print-content h1 {
+    color: #5e4b8b;
+    font-size: 24pt;
+    margin-bottom: 1rem;
+  }
+
+  #print-content h3 {
+    color: #5e4b8b;
+    font-size: 14pt;
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  #print-content p {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Ensure the narrative box is properly styled */
+  #print-content .bg-gray-900 {
+    background-color: #f8f8f8 !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px;
+    padding: 1rem;
+  }
+}
