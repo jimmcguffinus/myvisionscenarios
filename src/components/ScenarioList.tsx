@@ -9,11 +9,12 @@ import { AlertCircle, AlertTriangle } from "lucide-react"
 
 interface ScenarioListProps {
   scenarios: Scenario[]
-  onSelectScenario: (scenario: Scenario) => void
+  onSelectScenario?: (scenario: Scenario) => void
   onDelete: (id: string) => void
+  isLoading?: boolean
 }
 
-const ScenarioList: React.FC<ScenarioListProps> = ({ scenarios, onSelectScenario, onDelete }) => {
+const ScenarioList: React.FC<ScenarioListProps> = ({ scenarios, onSelectScenario, onDelete, isLoading = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState<keyof Scenario>('ID');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -79,93 +80,64 @@ const ScenarioList: React.FC<ScenarioListProps> = ({ scenarios, onSelectScenario
     }
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col justify-center items-center h-64 bg-black rounded-lg border border-purple-dark/30 shadow-xl">
+        <div className="h-12 w-12 text-purple-accent animate-spin mb-4" />
+        <p className="text-purple-light">Loading scenarios...</p>
+      </div>
+    )
+  }
+
   return (
-    <div className="scenario-list p-4">
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Search scenarios..."
-          className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:text-white dark:border-gray-700"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-      
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
-          <thead className="bg-gray-100 dark:bg-gray-700">
-            <tr>
-              <th 
-                className="px-4 py-2 cursor-pointer"
-                onClick={() => handleSort('ID')}
-              >
-                ID {sortField === 'ID' && (sortDirection === 'asc' ? '↑' : '↓')}
-              </th>
-              <th 
-                className="px-4 py-2 cursor-pointer"
-                onClick={() => handleSort('Summary')}
-              >
-                Summary {sortField === 'Summary' && (sortDirection === 'asc' ? '↑' : '↓')}
-              </th>
-              <th 
-                className="px-4 py-2 cursor-pointer"
-                onClick={() => handleSort('DangerRanking')}
-              >
-                Danger Ranking {sortField === 'DangerRanking' && (sortDirection === 'asc' ? '↑' : '↓')}
-              </th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredScenarios.map((scenario) => (
-              <tr key={scenario.ID} className="border-b border-gray-200 dark:border-gray-700">
-                <td className="px-4 py-2 dark:text-gray-300">{scenario.ID}</td>
-                <td className="px-4 py-2 dark:text-gray-300">{scenario.Summary}</td>
-                <td className="px-4 py-2 dark:text-gray-300">{scenario.DangerRanking}</td>
-                <td className="px-4 py-2 flex space-x-2">
-                  <Link
-                    to={`/edit/${scenario.ID}`}
-                    className="bg-purple-600 text-white px-3 py-1 rounded-md hover:bg-purple-700"
-                  >
-                    Edit
-                  </Link>
-                  <Link
-                    to={`/print/${scenario.ID}`}
-                    className="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700"
-                  >
-                    Print
-                  </Link>
-                  <Link
-                    to={`/ai-explain/${scenario.ID}`}
-                    className="bg-forest-500 text-white px-3 py-1 rounded-md hover:bg-forest-600"
-                  >
-                    AI Explain
-                  </Link>
-                  <button
-                    onClick={() => {
-                      if (window.confirm('Are you sure you want to delete this scenario?')) {
-                        onDelete(scenario.ID);
-                      }
-                    }}
-                    className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      
-      <div className="mt-4">
-        <Link
-          to="/new"
-          className="bg-forest-500 text-white px-4 py-2 rounded-md hover:bg-forest-600"
-        >
-          Create New Scenario
-        </Link>
-      </div>
+    <div className="bg-black rounded-lg shadow-xl overflow-hidden border border-purple-dark/30">
+      {scenarios.length === 0 ? (
+        <div className="p-8 text-center text-purple-muted">No scenarios found. Try adjusting your search criteria.</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-gray-900">
+              <TableRow className="border-b border-purple-dark/30">
+                <TableHead className="text-purple-accent font-bold">ID</TableHead>
+                <TableHead className="text-purple-accent font-bold">Summary</TableHead>
+                <TableHead className="text-purple-accent font-bold">Danger</TableHead>
+                <TableHead className="text-purple-accent font-bold">DRV</TableHead>
+                <TableHead className="text-purple-accent font-bold">Impact</TableHead>
+                <TableHead className="text-purple-accent font-bold">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {scenarios.map((scenario) => (
+                <TableRow
+                  key={scenario.ID}
+                  className={`border-b border-gray-800 hover:bg-gray-900 cursor-pointer transition-colors ${getDangerRowClass(
+                    scenario.DangerRanking,
+                  )}`}
+                >
+                  <TableCell className="font-mono text-purple-light bg-black">{scenario.ID}</TableCell>
+                  <TableCell className="text-purple-light font-medium bg-black flex items-center">
+                    {getDangerIcon(scenario.DangerRanking)}
+                    {scenario.Summary}
+                  </TableCell>
+                  <TableCell className="bg-black">
+                    <Badge className={`${getDangerColor(scenario.DangerRanking)}`}>{scenario.DangerRanking}</Badge>
+                  </TableCell>
+                  <TableCell className="text-purple-light bg-black">{getDrvBadge(scenario.drv)}</TableCell>
+                  <TableCell className="text-purple-light max-w-[200px] truncate bg-black">{scenario.Impact}</TableCell>
+                  <TableCell className="bg-black">
+                    <button
+                      onClick={() => onDelete(scenario.ID)}
+                      className="bg-purple-dark hover:bg-purple-highlight text-white px-3 py-1 rounded-md text-sm transition-colors shadow-sm"
+                    >
+                      Delete
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   );
 };

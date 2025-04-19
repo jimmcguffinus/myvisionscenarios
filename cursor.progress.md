@@ -420,3 +420,12 @@ All key features remain functional:
 - Dark theme with purple accents
 
 The Ghostbusters route is still available for any future cache-busting needs, maintaining our readiness for any hosting challenges that might arise. 
+
+function ScenarioEditWrapper({ scenarios, onUpdate, onDelete, onCreate }: {
+  scenarios: Scenario[];
+  onUpdate: (scenario: Scenario) => void;
+  onDelete?: (id: string) => void;
+  onCreate?: (scenario: Omit<Scenario, "ID">) => void;
+}) {
+  // existing code
+} 
