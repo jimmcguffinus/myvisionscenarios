@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <title>Vision Scenarios - Ghostbusters Edition</title>
+    <title>Vision Scenarios</title>
     <script>
       // Unregister any service workers that might be caching content
       if ('serviceWorker' in navigator) {
@@ -15,21 +15,6 @@
           for (let registration of registrations) {
             registration.unregister();
             console.log('ServiceWorker unregistered');
-          }
-        });
-      }
-      
-      // Add timestamp to localStorage to help with cache busting
-      localStorage.setItem('visionScenariosBuildTime', Date.now().toString());
-      
-      // Add random query parameter to all subsequent page loads
-      if (!window.location.search.includes('nocache')) {
-        window.addEventListener('load', function() {
-          const links = document.getElementsByTagName('a');
-          for (let i = 0; i < links.length; i++) {
-            if (links[i].hostname === window.location.hostname) {
-              links[i].search += (links[i].search ? '&' : '?') + 'nocache=' + Math.random().toString(36).substring(7);
-            }
           }
         });
       }

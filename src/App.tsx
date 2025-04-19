@@ -1,13 +1,10 @@
-// src/App.tsx - Remove unused import
-
-// import React from 'react'; // DELETE or COMMENT OUT this line
-
+// src/App.tsx - CLEANED - Router Definition Only
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import ScenarioListPage from './pages/ScenarioListPage';
 
 function App() {
-  // console.log("App Router Initializing"); // Keep this commented unless needed
+  // No console logs needed here
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
