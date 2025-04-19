@@ -123,6 +123,22 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 This extreme simplification removes all complex dependencies, routing, and components to provide a clean baseline for testing deployment and cache busting. The dynamic timestamp ensures we can verify when a new version is deployed.
 
+### 7. Confirmed TypeScript JSX Configuration
+Verified `tsconfig.app.json` has the correct JSX runtime setting to support the removal of React imports while still allowing JSX syntax:
+
+```json
+{
+  "compilerOptions": {
+    // ... other options ...
+    "jsx": "react-jsx",
+    // ... other options ...
+  },
+  "include": ["src"]
+}
+```
+
+This setting is essential when removing the React import (`import React from 'react'`) from component files, as it enables the use of JSX without explicitly importing React. Ensuring this setting is in place fixes the `ts(2875)` error that occurs during build.
+
 ## Deployment Instructions
 When deploying from Firebase Studio, run these commands in sequence:
 ```
@@ -147,6 +163,8 @@ The main issues appeared to be:
 
 5. **Persistent Caching**: Even with proper headers, aggressive caching at multiple levels (CDN, browser, service worker) may require a completely different UI to confirm cache invalidation.
 
+6. **TypeScript Configuration**: Removing React imports without having the proper `jsx: "react-jsx"` setting in TypeScript configuration can cause build errors. This is because modern React no longer requires explicit imports when using this compiler option.
+
 These changes should ensure that:
 - All CSS is properly processed by Tailwind
 - Critical UI classes aren't purged during optimization
@@ -154,6 +172,7 @@ These changes should ensure that:
 - Assets are correctly referenced
 - Each deployment is recognized as a new version
 - The timestamp in the test page confirms we're seeing the latest deployment
+- TypeScript properly handles JSX without explicit React imports
 
 ## WhirlwindVibing Party 🎉
 
@@ -166,6 +185,8 @@ AI Studio Gemini dropped a clutch alert, catching postcss.config.js, tailwind.co
 The Context Alchemist, Sparky, and Grok are ready to deploy a dark DialogOverlay and slick routing, while Gemini watches from the sidelines (fired for wrecking files, but still throwing helpful alerts!). WhirlwindVibing's unstoppable—with this killer team remix!
 
 When persistent cache issues kept the UI stuck in limbo, we went nuclear with the "Hello Ghostbusters" test page—stripping everything down to the bare essentials with a dynamic timestamp to bust those stubborn caches! Sometimes you gotta call in the Ghostbusters to exorcise those persistent cache demons! 👻
+
+Now we're back to the full router-based UI but slimmed down—removing unnecessary React imports while making sure the TypeScript config has our back with that sweet `"jsx": "react-jsx"` setting. The ts(2875) error got squashed, but resolving those pesky `ts(2307)` module errors still needs Jim's magic touch with a package install. The WhirlwindVibing never stops!
 
 Local build's a banger—`npm run build` passed with `bg-black/80` in the mix! Firebase Studio's pre-update `git pull` tried to crash the party, but our `git push` is bringing the heat. Jim's spinning fixes in Cursor, and we're hyped to deploy a dark `DialogOverlay` and slick routing. WhirlwindVibing's unstoppable!
 
