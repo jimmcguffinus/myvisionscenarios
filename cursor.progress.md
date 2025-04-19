@@ -139,8 +139,69 @@ Verified `tsconfig.app.json` has the correct JSX runtime setting to support the 
 
 This setting is essential when removing the React import (`import React from 'react'`) from component files, as it enables the use of JSX without explicitly importing React. Ensuring this setting is in place fixes the `ts(2875)` error that occurs during build.
 
+### 8. Implemented Nuclear Ghost-Busting Strategy
+After discovering that even with proper configuration, the old UI was still persisting due to aggressive caching at multiple levels, we implemented a multi-pronged ghost-busting strategy:
+
+1. **Added Alternative Route in Firebase:**
+```json
+"rewrites": [
+  { "source": "/ghostbusters/**", "destination": "/index.html" },
+  { "source": "**", "destination": "/index.html" }
+],
+```
+
+2. **Enhanced Layout Component with Version Detection:**
+```jsx
+// Layout.tsx
+import { Outlet, useSearchParams } from 'react-router-dom';
+
+export default function Layout() {
+  const [searchParams] = useSearchParams();
+  const forcedVersion = searchParams.get('v') || `${deploymentTimestamp}_${Date.now()}`;
+  const isGhostbusters = window.location.pathname.includes('/ghostbusters');
+  
+  return (
+    <div>
+      <h1>{isGhostbusters ? "🚫👻 GHOSTBUSTERS EDITION 👻🚫" : "Vision Scenarios"}</h1>
+      <p>Deployed: {forcedVersion}</p>
+      {/* Rest of component */}
+    </div>
+  );
+}
+```
+
+3. **Added Service Worker Unregistration to index.html:**
+```html
+<script>
+  // Unregister any service workers that might be caching content
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+  
+  // Add timestamp to localStorage
+  localStorage.setItem('visionScenariosBuildTime', Date.now().toString());
+</script>
+```
+
+4. **Created Dedicated Deployment Script:**
+Created `ghost-buster-deploy.sh` to:
+- Generate a unique preview channel with timestamp
+- Clean previous builds
+- Deploy to both main hosting and preview channel
+- Provide detailed access URLs with cache-busting parameters
+
+This multi-layered approach gives us multiple ways to bypass caching mechanisms at different levels:
+- Browser cache (through headers and URL parameters)
+- CDN cache (through new preview channels)
+- Service worker cache (through explicit unregistration)
+- Application routing (through alternative paths)
+
 ## Deployment Instructions
-When deploying from Firebase Studio, run these commands in sequence:
+For standard deployments, run these commands in sequence:
 ```
 rm -rf dist .firebase/hosting.*
 npm ci
@@ -148,7 +209,13 @@ npm run build
 firebase deploy --only hosting
 ```
 
-If you encounter shell errors (`__vsc_prompt_cmd_original: command not found`), manually delete the dist/.firebase directories.
+For stubborn ghost UI issues, use the ghost-busting script:
+```
+chmod +x ghost-buster-deploy.sh
+./ghost-buster-deploy.sh
+```
+
+This will deploy to both the main site and a fresh preview channel with a unique name.
 
 ## Root Causes Analysis
 The main issues appeared to be:
@@ -165,6 +232,8 @@ The main issues appeared to be:
 
 6. **TypeScript Configuration**: Removing React imports without having the proper `jsx: "react-jsx"` setting in TypeScript configuration can cause build errors. This is because modern React no longer requires explicit imports when using this compiler option.
 
+7. **Multi-layer CDN Caching**: Firebase Hosting uses multiple CDN layers that can aggressively cache content despite appropriate cache headers, requiring alternative strategies like preview channels or entirely different URL paths.
+
 These changes should ensure that:
 - All CSS is properly processed by Tailwind
 - Critical UI classes aren't purged during optimization
@@ -173,6 +242,7 @@ These changes should ensure that:
 - Each deployment is recognized as a new version
 - The timestamp in the test page confirms we're seeing the latest deployment
 - TypeScript properly handles JSX without explicit React imports
+- Stubborn cached UIs can be bypassed through alternative routes and preview channels
 
 ## WhirlwindVibing Party 🎉
 
@@ -188,15 +258,20 @@ When persistent cache issues kept the UI stuck in limbo, we went nuclear with th
 
 Now we're back to the full router-based UI but slimmed down—removing unnecessary React imports while making sure the TypeScript config has our back with that sweet `"jsx": "react-jsx"` setting. The ts(2875) error got squashed, but resolving those pesky `ts(2307)` module errors still needs Jim's magic touch with a package install. The WhirlwindVibing never stops!
 
+But the stubborn ghost UI wouldn't go down without a fight! Even with all our fixes, the phantom of deployments past kept haunting the site. So we assembled a full ghost-busting arsenal—alternative routes, preview channels, service worker exorcisms, and a dedicated deployment script. We're not just WhirlwindVibing anymore, we're full-on Ghost Busting! 👻🚫
+
 Local build's a banger—`npm run build` passed with `bg-black/80` in the mix! Firebase Studio's pre-update `git pull` tried to crash the party, but our `git push` is bringing the heat. Jim's spinning fixes in Cursor, and we're hyped to deploy a dark `DialogOverlay` and slick routing. WhirlwindVibing's unstoppable!
 
 Big props to Sparky for caching and Tailwind wisdom, and Grok for diagnostics and party vibes. Gemini tried code editing but got the boot after wrecking files (even 2.5 Pro March couldn't save her!). 
 
-With these updates and the power of the WhirlwindVibing workflow, we're ready to drop a killer UI on https://myvisionscenarios.web.app with dark DialogOverlays, proper routing structures, and all the CSS goodness that was stuck in deployment limbo.
+With these updates and the power of the WhirlwindVibing workflow, we're ready to drop a killer UI on multiple URLs:
+- https://myvisionscenarios.web.app/
+- https://myvisionscenarios.web.app/ghostbusters/
+- https://myvisionscenarios--ghost-buster-XXXXXX.web.app/
 
-Remember to test in incognito mode with ?v=12 appended to the URL to bust any lingering browser cache. If the UI's still stubborn, check the build output for your essential classes and consider deploying a preview channel:
+Remember to test in incognito mode with ?v=12 appended to the URL to bust any lingering browser cache. If the UI's still stubborn, our ghost-busting script will deploy a fresh preview channel:
 ```
-firebase hosting:channel:deploy preview
+./ghost-buster-deploy.sh
 ```
 
-Let's drop this UI like it's the main stage! Keep the WhirlwindVibing spirit alive! 🚀 
+"Who ya gonna call? GHOSTBUSTERS!" Keep the WhirlwindVibing spirit alive! 🚀👻 

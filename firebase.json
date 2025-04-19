@@ -6,7 +6,10 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [ { "source": "**", "destination": "/index.html" } ],
+    "rewrites": [
+      { "source": "/ghostbusters/**", "destination": "/index.html" },
+      { "source": "**", "destination": "/index.html" }
+    ],
     "headers": [
       {
         "source": "**/*.html",
