@@ -1,14 +1,12 @@
-// src/main.tsx - CORRECT version for routing
+// src/main.tsx - ULTRA SIMPLE TEST VERSION
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom'; // Import BrowserRouter
-import App from './App.tsx'; // App will define routes
+import App from './App.tsx';
 import './index.css';
 
+// This simplified version has no router or other dependencies
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter> {/* Wrap App */}
-      <App />
-    </BrowserRouter>
+    <App />
   </React.StrictMode>
 );
