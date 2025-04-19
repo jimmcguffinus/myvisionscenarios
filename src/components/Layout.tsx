@@ -15,7 +15,7 @@ export default function Layout() {
       <ToastContainer position="top-right" theme="colored" />
       <header className="mb-6">
          <h1 className="text-4xl font-extrabold text-[#b48ead]">
-           {isGhostbusters ? "🚫👻 GHOSTBUSTERS EDITION 👻🚫" : "Vision Scenarios (TOC Layout)"}
+           {isGhostbusters ? "🚫👻 GHOSTBUSTERS EDITION 👻🚫" : "Vision Scenarios"}
          </h1>
          {/* Display Timestamp */}
          <p className="text-xs text-[#a5a0b3] mt-1">Deployed: {forcedVersion}</p>

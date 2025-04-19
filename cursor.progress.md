@@ -82,7 +82,20 @@ Updated `firebase.json` with strict cache control headers:
 ### 5. Cleaned Up index.html Script Path
 Ensured index.html script path is clean for Vite's production build:
 ```html
-<script type="module" src="/src/main.tsx"></script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vision Scenarios</title>
+    <meta name="description" content="Vision Scenarios Manager - A React, Vite, TypeScript, Tailwind, and Shadcn UI application" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
 ```
 Confirmed dist/index.html outputs hashed assets (/assets/index-*.js) after build, which handles cache busting automatically.
 
@@ -318,7 +331,7 @@ npm run build
 firebase deploy --only hosting
 ```
 
-For stubborn ghost UI issues, use the ghost-busting script:
+For stubborn ghost UI issues, use the ghost-buster-deploy.sh script:
 ```
 chmod +x ghost-buster-deploy.sh
 ./ghost-buster-deploy.sh
@@ -379,3 +392,31 @@ With these updates and the power of the WhirlwindVibing workflow, we're ready to
 The ghost is busted, the dependencies are installed, and the app is restored—this WhirlwindVibing session is wrapping up with a total victory! Keep checking those URLs in incognito mode to verify everything's working smoothly, and if any ghostly remnants appear, you know who to call!
 
 "Who ya gonna call? GHOSTBUSTERS!" Keep the WhirlwindVibing spirit alive! 🚀👻 
+
+## UI Upgrade: Vision-Scenario-CRUD with Next.js to Vite Conversion
+
+We've successfully converted the vision-scenario-crud project from Next.js to Vite, maintaining all the functionality while gaining the benefits of Vite's faster development experience:
+
+1. **UI Components**: Transferred all UI components (ScenarioList, ScenarioEdit, AIExplain, PrintView) while maintaining their functionality and dark theme styling
+2. **Styling & Theme**: Preserved the custom purple/dark theme with all custom CSS classes and variables
+3. **Routing**: Implemented React Router for client-side routing, including the Ghostbusters route for cache busting
+4. **Type System**: Kept all TypeScript interfaces and type definitions intact
+5. **Data Handling**: Maintained CSV parsing functionality for loading scenario data
+6. **Print Support**: Retained special print styling for the PrintView component
+
+The conversion provides these benefits:
+- Faster development with Vite's quick hot-module replacement
+- Simpler configuration with fewer files and dependencies
+- Better performance without the server-side rendering overhead
+- Maintained all visual aesthetics and functionality
+
+This continues our WhirlwindVibing approach, providing a smooth upgrade path that preserves the hard work done in the cache-busting phase while modernizing the development experience.
+
+All key features remain functional:
+- Scenario listing and filtering
+- Scenario editing and creation
+- AI explanation generation with different personas
+- Print-friendly scenario views
+- Dark theme with purple accents
+
+The Ghostbusters route is still available for any future cache-busting needs, maintaining our readiness for any hosting challenges that might arise. 
