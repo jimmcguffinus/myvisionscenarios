@@ -2,7 +2,9 @@
 export default {
     content: [
       "./index.html",
-      "./src/**/*.{js,ts,jsx,tsx}" // Scans src/App.tsx and components
+      "./src/**/*.{js,ts,jsx,tsx}",
+      "./components/**/*.{js,ts,jsx,tsx}",
+      "./components/ui/**/*.{js,ts,jsx,tsx}"
     ],
     theme: {
       extend: {}

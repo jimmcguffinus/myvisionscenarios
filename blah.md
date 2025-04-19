@@ -6,7 +6,7 @@
 ```js
 export default {
   plugins: {
-    tailwindcss: {},
+    '@tailwindcss/postcss': {},
     autoprefixer: {},
   },
 }
@@ -26,7 +26,9 @@ export default {
 export default {
     content: [
       "./index.html",
-      "./src/**/*.{js,ts,jsx,tsx}" // Scans src/App.tsx and components
+      "./src/**/*.{js,ts,jsx,tsx}",
+      "./components/**/*.{js,ts,jsx,tsx}",
+      "./components/ui/**/*.{js,ts,jsx,tsx}"
     ],
     theme: {
       extend: {}
@@ -55,7 +57,7 @@ export default {
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx?v=20240422"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
 
